@@ -110,6 +110,11 @@ class BotManager:
         try:
             self.logger.info("🚀 شروع راه‌اندازی ربات MNE")
             
+            # انتخاب تصادفی اکانت در شروع
+            initial_account = self.config.set_random_account_as_current()
+            if initial_account:
+                self.logger.info(f"🎯 اکانت اولیه انتخاب شد: {initial_account['username']}")
+            
             # راه‌اندازی مرورگر
             self.browser_launcher = BrowserLauncher(
                 proxy_manager=self.proxy_manager,
@@ -241,9 +246,15 @@ class BotManager:
             self.logger.error(f"❌ حداکثر تلاش ورود ({self.max_login_attempts}) به پایان رسید")
             self.is_running = False
             return
-        
+
         self.login_attempts += 1
         self.logger.info(f"🔐 شروع تلاش ورود #{self.login_attempts}/{self.max_login_attempts}")
+        
+        # انتخاب تصادفی credentials در هر تلاش ورود
+        random_account = self.config.set_random_account_as_current()
+        if not random_account:
+            self.logger.error("❌ هیچ اکانت معتبری برای ورود یافت نشد")
+            return
         
         try:
             # بررسی وضعیت مرورگر

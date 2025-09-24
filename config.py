@@ -1,5 +1,6 @@
 # config.py
 import os
+import random
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -64,6 +65,27 @@ class Config:
         if cls.MNE_ACCOUNTS:
             cls.CURRENT_ACCOUNT_INDEX = (cls.CURRENT_ACCOUNT_INDEX + 1) % len(cls.MNE_ACCOUNTS)
             return cls.get_current_account()
+        return None
+    
+    @classmethod
+    def get_random_account(cls):
+        """انتخاب تصادفی یک اکانت از لیست موجود"""
+        if cls.MNE_ACCOUNTS:
+            selected_account = random.choice(cls.MNE_ACCOUNTS)
+            # به‌روزرسانی شاخص فعلی برای سازگاری
+            cls.CURRENT_ACCOUNT_INDEX = cls.MNE_ACCOUNTS.index(selected_account)
+            return selected_account
+        elif cls.MNE_USERNAME and cls.MNE_PASSWORD:
+            return {'username': cls.MNE_USERNAME, 'password': cls.MNE_PASSWORD}
+        return None
+    
+    @classmethod
+    def set_random_account_as_current(cls):
+        """انتخاب تصادفی اکانت و تنظیم آن به عنوان اکانت فعلی"""
+        random_account = cls.get_random_account()
+        if random_account:
+            print(f"🎲 اکانت تصادفی انتخاب شد: {random_account['username']}")
+            return random_account
         return None
     
     @classmethod
